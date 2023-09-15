@@ -159,7 +159,12 @@ export default function App() {
   }
 
   function handleRegister(status) {
-    setIsTooltipOpen(status.data !== undefined);
+    if(status === false){
+      setIsTooltipOpen(false);
+    }
+    else{
+      setIsTooltipOpen(true);
+    }
     navigate('/sign-in', {replace: true})
   }
 
