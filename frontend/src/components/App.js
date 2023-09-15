@@ -31,20 +31,20 @@ export default function App() {
   const [isMobileMenuOpen,setIsMobileMenuOpen] = useState(false);
 
   React.useEffect(() =>{
-    tokenCheck();
+    if (tokenCheck()){
+      api.getInitialCards().then(res=>{
+        setCards(res.cards)
+      }).catch(e =>{
+        console.log(e)
+      })
 
-    api.getInitialCards().then(res=>{
-      setCards(res)
-    }).catch(e =>{
-      console.log(e)
-    })
+      api.getUserInfo().then(res=>{
+        setCurrentUser(res);
 
-    api.getUserInfo().then(res=>{
-      setCurrentUser(res);
-
-    }).catch(e =>{
-      console.log(e)
-    })
+      }).catch(e =>{
+        console.log(e)
+      })
+    }
 
     return()=>{
       }
@@ -54,14 +54,15 @@ export default function App() {
     const jwt = localStorage.getItem('jwt');
     if (jwt){
       getContent(jwt).then((res) => {
-        console.log(res)
         if (res){
           setLoggedIn(true);
           setEmail(res.email)
           navigate("/", {replace: true})
         }
       });
+      return true;
     }
+    else return false;
   }
 
   function handleCardDelete (card) {
@@ -74,18 +75,19 @@ export default function App() {
   }
 
   function handleCardLike(card) {
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(i => i === currentUser._id);
 
     if(isLiked){
       api.deleteCardLike(card._id).then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        setCards((state) => state.map((c) => c._id === card._id ? newCard.card : c));
       }).catch(e =>{
         console.log(e)
       })
     }
     else{
       api.addCardLike(card._id).then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+
+        setCards((state) => state.map((c) => c._id === card._id ? newCard.card : c));
       }).catch(e =>{
         console.log(e)
       })
@@ -118,7 +120,7 @@ export default function App() {
 
   function handleUpdateUser (data) {
     api.sendUserInfo(data).then(res=>{
-      setCurrentUser(res);
+      setCurrentUser(res.data);
       closeAllPopups();
     }).catch(err=>{
       console.log(err);
@@ -127,7 +129,7 @@ export default function App() {
 
   function handleUpdateAvatar(data) {
     api.sendUserAvatar(data).then(r=>{
-        setCurrentUser(r);
+        setCurrentUser(r.data);
         closeAllPopups();
       })
     .catch(err=>{
@@ -146,7 +148,13 @@ export default function App() {
 
   function handleLogin(email) {
         setLoggedIn(true);
-        setEmail(email)
+        setEmail(email);
+    api.getUserInfo().then(res=>{
+      setCurrentUser(res);
+
+    }).catch(e =>{
+      console.log(e)
+    })
         navigate("/", {replace: true});
   }
 
