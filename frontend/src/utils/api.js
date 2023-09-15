@@ -1,7 +1,9 @@
 class Api {
   constructor(options) {
     this._baseUrl = options.baseUrl;
-    this._headers = options.headers;
+    this._headers = {
+      'Content-type': 'application/json',
+    }
   }
 
   _waitResponse(prom){
@@ -10,13 +12,19 @@ class Api {
   }
 
   getInitialCards() {
-    return fetch(this._baseUrl + '/cards', {headers : this._headers})
+    return fetch(this._baseUrl + '/cards', {
+      headers: this._headers,
+      credentials: "include",
+    })
       .then(res => this._waitResponse(res))
 
   }
 
   getUserInfo(){
-    return fetch(this._baseUrl + '/users/me', {headers : this._headers})
+    return fetch(this._baseUrl + '/users/me', {
+      headers: this._headers,
+      credentials: "include",
+    })
       .then(res => this._waitResponse(res))
   }
 
@@ -24,6 +32,7 @@ class Api {
     return fetch(this._baseUrl + '/users/me', {
       method: 'PATCH',
       headers: this._headers,
+      credentials: "include",
       body: JSON.stringify({
         name: name,
         about: about,
@@ -35,6 +44,7 @@ class Api {
     return fetch(this._baseUrl + '/users/me/avatar', {
       method: 'PATCH',
       headers: this._headers,
+      credentials: "include",
       body: JSON.stringify({
         avatar : avatar,
       })
@@ -45,6 +55,7 @@ class Api {
     return fetch(this._baseUrl + '/cards', {
       method: 'POST',
       headers: this._headers,
+      credentials: "include",
       body: JSON.stringify({
         name: name,
         link: link,
@@ -56,6 +67,7 @@ class Api {
     return fetch(this._baseUrl + '/cards/' + id, {
       method: 'DELETE',
       headers: this._headers,
+      credentials: "include",
     }).then(res => this._waitResponse(res))
       .catch(err=>{
         console.log(err)
@@ -66,6 +78,7 @@ class Api {
     return fetch(this._baseUrl + '/cards/' + id + '/likes', {
       method: 'DELETE',
       headers: this._headers,
+      credentials: "include",
     }).then(res => this._waitResponse(res))
   }
 
@@ -73,6 +86,7 @@ class Api {
     return fetch(this._baseUrl + '/cards/' + id + '/likes', {
       method: 'PUT',
       headers: this._headers,
+      credentials: "include",
     }).then(res => this._waitResponse(res))
   }
 
@@ -80,7 +94,4 @@ class Api {
 
 export const api = new Api({
   baseUrl: 'https://api.rtemiysproject.nomoredomainsrocks.ru',
-  headers: {
-    'Content-Type': 'application/json'
-  }
 });
