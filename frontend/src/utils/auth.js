@@ -22,8 +22,8 @@ export function authorize(email,password){
     body: JSON.stringify({email: email, password: password})
   }).then(res => res.json())
     .then(data => {
-      if (data.token){
-        localStorage.setItem('jwt', data.token);
+      if (data._id){
+        localStorage.setItem('jwt', data._id);
         return data;
       }
     })
