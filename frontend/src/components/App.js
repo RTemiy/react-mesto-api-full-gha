@@ -54,9 +54,10 @@ export default function App() {
     const jwt = localStorage.getItem('jwt');
     if (jwt){
       getContent(jwt).then((res) => {
+        console.log(res)
         if (res){
           setLoggedIn(true);
-          setEmail(res.data.email)
+          setEmail(res.email)
           navigate("/", {replace: true})
         }
       });
